@@ -13,9 +13,8 @@ public class BioSocketTimeClient {
         try {
             Socket socket = new Socket("localhost", port);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(),false);
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
             out.println("QUERY TIME ORDER");
-            out.flush();
             String response = in.readLine();
             System.out.println("Now is:" + response);
             out.close();
