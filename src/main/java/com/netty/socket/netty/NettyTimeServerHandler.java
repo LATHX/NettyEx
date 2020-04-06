@@ -14,18 +14,20 @@ public class NettyTimeServerHandler extends ChannelHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] req = new byte[buf.readableBytes()];
-        buf.readBytes(req);
-        String body = new String(req, "UTF-8");
+        String body = (String) msg;
         String currentTime = "";
         if ("QUERY TIME ORDER".equalsIgnoreCase(body)) {
             currentTime = new java.util.Date(System.currentTimeMillis()).toString();
         } else {
             currentTime = "BAD ORDER";
         }
+        // LineBasedFrameDecoder 用 \r\n
+//        currentTime += System.getProperty("line.separator");
+
+        // DelimiterBasedFrameDecoder 自定义 $_ 消息分隔符
+        currentTime += "$_";
         ByteBuf resp = Unpooled.copiedBuffer(currentTime.getBytes());
-        ctx.write(resp);
+        ctx.writeAndFlush(resp);
     }
 
     @Override
